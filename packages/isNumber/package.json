@@ -1,5 +1,5 @@
 {
-  "name": "js-type-checks-isNumber",
+  "name": "js-type-checks",
   "version": "1.0.1",
   "description": "",
   "main": "lib/index.ts",
@@ -12,7 +12,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Michel Wene",
   "license": "ISC",
   "devDependencies": {
     "rollup": "^4.34.9",
