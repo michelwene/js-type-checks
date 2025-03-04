@@ -1,0 +1,13 @@
+{
+  "packages": [
+    "packages/*"
+  ],
+  "version": "0.1.5",
+  "npmClient": "pnpm",
+  "stream": true,
+  "command": {
+    "publish": {
+      "conventionalCommits": true
+    }
+  }
+}
