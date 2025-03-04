@@ -1,5 +1,3 @@
-function isNumber(value: any): value is number {
-  return typeof value === "number";
-}
+import isNumber from "./isNumber";
 
 export default isNumber;

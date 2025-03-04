@@ -1,6 +1,6 @@
 {
-  "name": "js-type-checks",
-  "version": "1.0.2",
+  "name": "js-isnumber",
+  "version": "1.0.0",
   "description": "",
   "main": "lib/index.ts",
   "type": "module",
