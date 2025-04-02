@@ -1,0 +1,51 @@
+name: Auto Create Pull Request
+
+on:
+  push:
+    branches:
+      - '*'
+      - '!develop'
+      - '!quality'
+      - '!staging'
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  create-pull-requests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract branch name
+        run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
+      - name: Create PR to develop
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: ${{ env.BRANCH_NAME }}
+          base: develop
+          title: "${{ env.BRANCH_NAME }} - Auto PR → develop"
+          body: "Este PR foi gerado automaticamente para merge da branch `${{ env.BRANCH_NAME }}` em `develop`."
+          labels: "auto-pr"
+
+      - name: Create PR to quality
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: ${{ env.BRANCH_NAME }}
+          base: quality
+          title: "${{ env.BRANCH_NAME }} - Auto PR → quality"
+          body: "Este PR foi gerado automaticamente para merge da branch `${{ env.BRANCH_NAME }}` em `quality`."
+          labels: "auto-pr"
+
+      - name: Create PR to staging
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: ${{ env.BRANCH_NAME }}
+          base: staging
+          title: "${{ env.BRANCH_NAME }} - Auto PR → staging"
+          body: "Este PR foi gerado automaticamente para merge da branch `${{ env.BRANCH_NAME }}` em `staging`."
+          labels: "auto-pr"
