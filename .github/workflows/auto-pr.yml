@@ -9,8 +9,8 @@ on:
       - '!staging'
 
 permissions:
-  pull-requests: write
   contents: write
+  pull-requests: write
 
 jobs:
   create-pull-requests:
@@ -19,33 +19,40 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Garante que todas as branches sejam carregadas
 
       - name: Extract branch name
-        run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
+          echo "Branch identificada: $BRANCH_NAME"
+
+      - name: Fetch branches
+        run: |
+          git fetch origin develop quality staging
+          git branch -a
+
+      - name: Ensure branches are up to date
+        run: |
+          git checkout develop && git pull origin develop
+          git checkout quality && git pull origin quality
+          git checkout staging && git pull origin staging
 
       - name: Create PR to develop
-        uses: peter-evans/create-pull-request@v6
-        with:
-          branch: ${{ env.BRANCH_NAME }}
-          base: develop
-          title: "${{ env.BRANCH_NAME }} - Auto PR → develop"
-          body: "Este PR foi gerado automaticamente para merge da branch `${{ env.BRANCH_NAME }}` em `develop`."
-          labels: "auto-pr"
+        run: |
+          gh pr create --base develop --head ${{ env.BRANCH_NAME }} --title "${{ env.BRANCH_NAME }} - Auto PR → develop" --body "Este PR foi gerado automaticamente."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create PR to quality
-        uses: peter-evans/create-pull-request@v6
-        with:
-          branch: ${{ env.BRANCH_NAME }}
-          base: quality
-          title: "${{ env.BRANCH_NAME }} - Auto PR → quality"
-          body: "Este PR foi gerado automaticamente para merge da branch `${{ env.BRANCH_NAME }}` em `quality`."
-          labels: "auto-pr"
+        run: |
+          gh pr create --base quality --head ${{ env.BRANCH_NAME }} --title "${{ env.BRANCH_NAME }} - Auto PR → quality" --body "Este PR foi gerado automaticamente."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create PR to staging
-        uses: peter-evans/create-pull-request@v6
-        with:
-          branch: ${{ env.BRANCH_NAME }}
-          base: staging
-          title: "${{ env.BRANCH_NAME }} - Auto PR → staging"
-          body: "Este PR foi gerado automaticamente para merge da branch `${{ env.BRANCH_NAME }}` em `staging`."
-          labels: "auto-pr"
+        run: |
+          gh pr create --base staging --head ${{ env.BRANCH_NAME }} --title "${{ env.BRANCH_NAME }} - Auto PR → staging" --body "Este PR foi gerado automaticamente."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
